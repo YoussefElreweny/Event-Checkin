@@ -1,0 +1,15 @@
+services:
+  db:
+    image: postgres:16
+    container_name: event-checkin-db
+    environment:
+      POSTGRES_DB: event_checkin
+      POSTGRES_USER: eventuser
+      POSTGRES_PASSWORD: eventpass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
