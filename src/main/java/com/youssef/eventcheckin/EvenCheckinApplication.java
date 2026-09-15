@@ -1,4 +1,4 @@
-package com.youssef.even_checkin;
+package com.youssef.eventcheckin;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
