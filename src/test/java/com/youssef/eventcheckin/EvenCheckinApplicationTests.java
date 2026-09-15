@@ -1,4 +1,4 @@
-package com.youssef.even_checkin;
+package com.youssef.eventcheckin;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
