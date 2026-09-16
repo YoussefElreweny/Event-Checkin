@@ -5,6 +5,7 @@ import com.youssef.eventcheckin.attendee.dto.CreateAttendeeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -36,6 +37,12 @@ public class AttendeeService {
         return toResponse(attendee);
     }
 
+    public List<AttendeeResponse> getAll() {
+        return attendeeRepository.findAll()
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     private AttendeeResponse toResponse(Attendee attendee) {
 

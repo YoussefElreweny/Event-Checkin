@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -29,6 +30,12 @@ public class AttendeeController {
     @GetMapping("/{id}")
     public AttendeeResponse getById(@PathVariable UUID id) {
         return attendeeService.getById(id);
+    }
+
+
+    @GetMapping
+    public List<AttendeeResponse> getAll() {
+        return attendeeService.getAll();
     }
 
 }
