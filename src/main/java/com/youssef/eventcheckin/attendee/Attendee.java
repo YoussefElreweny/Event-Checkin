@@ -16,13 +16,12 @@ import java.util.UUID;
 @Slf4j
 @Getter
 @Setter
-@ToString
 @NoArgsConstructor
 @Table(name = "attendees")
 public class Attendee {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
     @Column(name = "full_name",nullable = false)

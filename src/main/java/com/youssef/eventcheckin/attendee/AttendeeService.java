@@ -5,7 +5,10 @@ import com.youssef.eventcheckin.attendee.dto.CreateAttendeeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.UUID;
 
 @Service
@@ -14,6 +17,7 @@ public class AttendeeService {
 
     private final AttendeeRepository attendeeRepository;
 
+    @Transactional
     public AttendeeResponse create(CreateAttendeeRequest createAttendeeRequest) {
 
         if (attendeeRepository.existsByEmail(createAttendeeRequest.email())) {
@@ -24,12 +28,15 @@ public class AttendeeService {
 
         attendee.setEmail(createAttendeeRequest.email());
         attendee.setFullName(createAttendeeRequest.fullName());
+        attendee.setPhone(createAttendeeRequest.phone());
+
 
         Attendee savedAttendee = attendeeRepository.save(attendee);
 
         return toResponse(savedAttendee);
     }
 
+    @Transactional
     public AttendeeResponse getById(UUID id) {
 
         Attendee attendee = attendeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Attendee not found"));;
@@ -37,12 +44,15 @@ public class AttendeeService {
         return toResponse(attendee);
     }
 
-    public List<AttendeeResponse> getAll() {
-        return attendeeRepository.findAll()
-                .stream()
-                .map(this::toResponse)
-                .toList();
+
+    @Transactional(readOnly = true)
+    public Page<AttendeeResponse> getAll(Pageable pageable) {
+        return attendeeRepository.findAll(pageable)
+                .map(this::toResponse);
     }
+
+
+
 
     private AttendeeResponse toResponse(Attendee attendee) {
 
