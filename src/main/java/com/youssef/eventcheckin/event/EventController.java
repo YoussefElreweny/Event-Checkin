@@ -26,6 +26,12 @@ public class EventController {
         return eventService.create(request);
     }
 
+    @PostMapping("/{id}/publish")
+    @ResponseStatus(HttpStatus.CREATED)
+    public EventResponse publish(@PathVariable UUID id) {
+        return eventService.publish(id);
+    }
+
     @GetMapping("/{id}")
     public EventResponse getById(@PathVariable UUID id) {
 

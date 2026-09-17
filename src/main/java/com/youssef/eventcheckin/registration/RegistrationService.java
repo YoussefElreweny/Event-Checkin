@@ -30,13 +30,13 @@ public class RegistrationService {
 
 
     @Transactional
-    public RegistrationResponse register(CreateRegistrationRequest createRegistrationRequest){
+    public RegistrationResponse register(UUID eventId , CreateRegistrationRequest request){
 
         // 1. Load Event
-        Event event = eventRepository.findById(createRegistrationRequest.eventId()).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
 
         // 2. Load attendee
-        Attendee attendee = attendeeRepository.findById(createRegistrationRequest.attendeeId()).orElseThrow(() -> new RuntimeException("Attendee not found"));
+        Attendee attendee = attendeeRepository.findById(request.attendeeId()).orElseThrow(() -> new RuntimeException("Attendee not found"));
 
         //3. Check event status
         if (event.getStatus() !=  EventStatus.PUBLISHED) {
@@ -44,7 +44,7 @@ public class RegistrationService {
         }
 
         //4. check capacity
-        long confirmedRegistration = registrationRepository.countByEventIdAndStatus(event.getId(),RegistrationStatus.Confirmed);
+        long confirmedRegistration = registrationRepository.countByEventIdAndStatus(event.getId(),RegistrationStatus.CONFIRMED);
 
         if (confirmedRegistration >= event.getCapacity()){
             throw new IllegalStateException("Event is at capacity");
@@ -54,7 +54,7 @@ public class RegistrationService {
         Registration registration = new Registration();
         registration.setEvent(event);
         registration.setAttendee(attendee);
-        registration.setStatus(RegistrationStatus.Confirmed);
+        registration.setStatus(RegistrationStatus.CONFIRMED);
         registrationRepository.save(registration);
 
         // 7. Create & save ticket
@@ -78,6 +78,8 @@ public class RegistrationService {
         return RegistrationResponse.from(registration, ticket);
     }
 
+
+    @Transactional
     public Page<RegistrationResponse> getEventRegistrations(UUID eventId, Pageable pageable) {
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));

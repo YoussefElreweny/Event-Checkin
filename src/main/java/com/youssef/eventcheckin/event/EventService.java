@@ -71,6 +71,21 @@ public class EventService {
                 .map(this::toResponse);
     }
 
+
+    @Transactional()
+    public EventResponse publish(UUID id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found"));
+
+        if (event.getStatus() != EventStatus.DRAFT) {
+            throw new IllegalStateException("Only draft events can be published");
+        }
+
+        event.setStatus(EventStatus.PUBLISHED);
+
+        return toResponse(event);
+    }
+
     private EventResponse toResponse(Event event) {
 
         return new EventResponse(

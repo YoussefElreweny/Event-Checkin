@@ -11,7 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.Instant;
 import java.util.UUID;
 
-import static com.youssef.eventcheckin.registration.RegistrationStatus.Confirmed;
+import static com.youssef.eventcheckin.registration.RegistrationStatus.CONFIRMED;
 
 @Entity
 @Getter
@@ -34,7 +34,7 @@ public class Registration {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private RegistrationStatus status = Confirmed;
+    private RegistrationStatus status = CONFIRMED;
 
     @Column(nullable = false)
     @CreationTimestamp
