@@ -22,6 +22,19 @@ public class EventService {
     @Transactional
     public EventResponse create(CreateEventRequest request) {
 
+        if (!request.endsAt().isAfter(request.startsAt())) {
+            throw new RuntimeException("End time must be after start time");
+        }
+
+        if (!request.checkInClosesAt().isAfter(request.checkInOpensAt())) {
+            throw new RuntimeException("Check-in closing time must be after opening time");
+        }
+
+        if (request.checkInOpensAt().isBefore(request.startsAt())
+                || request.checkInClosesAt().isAfter(request.endsAt())) {
+            throw new RuntimeException("Check-in window must be within the event time");
+        }
+
         User organizer = userRepository.findById(request.organizerId())
                 .orElseThrow(() -> new RuntimeException("Organizer not found"));
 

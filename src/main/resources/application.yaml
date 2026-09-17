@@ -8,6 +8,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: validate
+      format_sql: true
     open-in-view: false
   flyway:
     enabled: true
@@ -21,3 +22,4 @@ management:
 logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG
+    org.hibernate.SQL: DEBUG

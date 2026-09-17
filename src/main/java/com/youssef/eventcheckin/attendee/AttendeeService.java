@@ -39,7 +39,7 @@ public class AttendeeService {
     @Transactional
     public AttendeeResponse getById(UUID id) {
 
-        Attendee attendee = attendeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Attendee not found"));;
+        Attendee attendee = attendeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Attendee not found"));
 
         return toResponse(attendee);
     }

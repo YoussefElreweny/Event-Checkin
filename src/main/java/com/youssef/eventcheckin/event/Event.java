@@ -29,7 +29,7 @@ public class Event {
     @Column(nullable = false,length = 200)
     private String name;
     private String venue;
-    @Column(columnDefinition = "TEXT")
+
     private String description;
     @Column(nullable = false)
     private Instant startsAt;
