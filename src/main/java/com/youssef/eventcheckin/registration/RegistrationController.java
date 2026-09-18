@@ -4,6 +4,7 @@ package com.youssef.eventcheckin.registration;
 import com.youssef.eventcheckin.registration.dto.CreateRegistrationRequest;
 import com.youssef.eventcheckin.registration.dto.RegistrationResponse;
 import com.youssef.eventcheckin.ticket.Ticket;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,10 +22,10 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/events/{eventId}/registrations")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public RegistrationResponse register(
             @PathVariable UUID eventId,
-            @RequestBody CreateRegistrationRequest request){
+            @Valid @RequestBody CreateRegistrationRequest request){
 
         return registrationService.register(eventId, request);
     }

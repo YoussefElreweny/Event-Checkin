@@ -79,7 +79,7 @@ public class RegistrationService {
     }
 
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Page<RegistrationResponse> getEventRegistrations(UUID eventId, Pageable pageable) {
 
         Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));

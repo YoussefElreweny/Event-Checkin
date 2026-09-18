@@ -24,7 +24,7 @@ public record RegistrationResponse(
                 registration.getEvent().getId(),
                 registration.getAttendee().getId(),
                 registration.getEvent().getName(),
-                registration.getEvent().getName(),
+                registration.getAttendee().getFullName(),
                 registration.getStatus(),
                 registration.getRegisteredAt(),
                 registration.getCancelledAt(),
