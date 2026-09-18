@@ -1,5 +1,6 @@
 package com.youssef.eventcheckin.event;
 
+import com.youssef.eventcheckin.common.exception.NotFoundException;
 import com.youssef.eventcheckin.event.dto.CreateEventRequest;
 import com.youssef.eventcheckin.event.dto.EventResponse;
 import com.youssef.eventcheckin.user.User;
@@ -70,7 +71,7 @@ public class EventService {
     @Transactional()
     public EventResponse publish(UUID id) {
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         if (event.getStatus() != EventStatus.DRAFT) {
             throw new IllegalStateException("Only draft events can be published");
