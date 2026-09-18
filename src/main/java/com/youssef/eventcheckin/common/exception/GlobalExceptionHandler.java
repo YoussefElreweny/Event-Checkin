@@ -33,20 +33,9 @@ public class GlobalExceptionHandler {
                 .body(response);
     }
 
-    @ExceptionHandler(AlreadyCheckedInException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequest(AlreadyCheckedInException ex){
-
-        ErrorResponse response = ErrorResponse.builder()
-                .timestamp(Instant.now())
-                .status(409)
-                .error(HttpStatus.NOT_FOUND.getReasonPhrase())
-                .message(ex.getMessage())
-                .build();
-
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(response);
-
+    @ExceptionHandler(ConflictException.class)
+    public ResponseEntity<ErrorResponse> handleConflict(ConflictException ex) {
+        return build(HttpStatus.CONFLICT, ex.getMessage(), null);
     }
 
 
@@ -54,6 +43,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
             DataIntegrityViolationException ex) {
 
+        log.warn("Data integrity violation: {}", ex.getMostSpecificCause().getMessage());
         ErrorResponse error = ErrorResponse.builder()
                 .status(409)
                 .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
@@ -92,5 +82,19 @@ public class GlobalExceptionHandler {
                 .build();
 
         return ResponseEntity.status(422).body(error);
+    }
+
+
+
+
+    // Builder method for all. i will just use it for one for reference. Used inside the ConflictException handler
+    private ResponseEntity<ErrorResponse> build(HttpStatus status, String message, Map<String, String> fieldErrors) {
+        return ResponseEntity.status(status).body(ErrorResponse.builder()
+                .timestamp(Instant.now())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
+                .fieldErrors(fieldErrors)
+                .build());
     }
 }

@@ -24,11 +24,11 @@ public class EventService {
     public EventResponse create(CreateEventRequest request) {
 
         if (!request.checkInClosesAt().isAfter(request.checkInOpensAt())) {
-            throw new RuntimeException("Check-in closing time must be after opening time");
+            throw new IllegalStateException("Check-in closing time must be after opening time");
         }
 
         if (request.checkInClosesAt().isAfter(request.endsAt())) {
-            throw new RuntimeException("Check-in must close by the time the event ends");
+            throw new IllegalStateException("Check-in must close by the time the event ends");
         }
 
         User organizer = userRepository.findById(request.organizerId())
@@ -55,7 +55,7 @@ public class EventService {
     public EventResponse getById(UUID id) {
 
         Event event = eventRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Event not found"));
+                .orElseThrow(() -> new NotFoundException("Event not found"));
 
         return toResponse(event);
     }

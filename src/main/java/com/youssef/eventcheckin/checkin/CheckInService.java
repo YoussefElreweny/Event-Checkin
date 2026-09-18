@@ -2,6 +2,8 @@ package com.youssef.eventcheckin.checkin;
 
 import com.youssef.eventcheckin.checkin.dto.CreateCheckInRequest;
 import com.youssef.eventcheckin.checkin.dto.CheckInResponse;
+import com.youssef.eventcheckin.common.exception.AlreadyCheckedInException;
+import com.youssef.eventcheckin.common.exception.NotFoundException;
 import com.youssef.eventcheckin.event.Event;
 import com.youssef.eventcheckin.registration.Registration;
 import com.youssef.eventcheckin.registration.RegistrationStatus;
@@ -32,11 +34,11 @@ public class CheckInService {
 
         // 1. Find ticket by code
         Ticket ticket = ticketRepository.findByTicketCode(request.ticketCode())
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new NotFoundException("Ticket not found"));
 
         // 2. Check if ticket is revoked
         if (ticket.getRevokedAt() != null) {
-            throw new RuntimeException("Ticket has been revoked");
+            throw new IllegalStateException("Ticket has been revoked");
         }
 
         Registration registration = ticket.getRegistration();
@@ -45,12 +47,12 @@ public class CheckInService {
         Event event = registration.getEvent();
 
         if (!event.getId().equals(eventId)) {
-            throw new RuntimeException("Ticket does not belong to this event");
+            throw new IllegalStateException("Ticket does not belong to this event");
         }
 
         // 4. Check registration status
         if (registration.getStatus() != RegistrationStatus.CONFIRMED) {
-            throw new RuntimeException("Registration is not confirmed");
+            throw new IllegalStateException("Registration is not confirmed");
         }
 
         // 5. Check check-in window
@@ -58,17 +60,17 @@ public class CheckInService {
 
         if (now.isBefore(event.getCheckInOpensAt())
                 || now.isAfter(event.getCheckInClosesAt())) {
-            throw new RuntimeException("Check-in is not currently open");
+            throw new IllegalStateException("Check-in is not currently open");
         }
 
         // 6. Check if already checked in
         if (checkInRepository.existsByTicketId(ticket.getId())) {
-            throw new RuntimeException("Ticket has already been checked in");
+            throw new AlreadyCheckedInException("Ticket has already been checked in");
         }
 
         // Find staff user
         User staffUser = userRepository.findById(request.staffUserId())
-                .orElseThrow(() -> new RuntimeException("Staff user not found"));
+                .orElseThrow(() -> new NotFoundException("Staff user not found"));
 
         // 7. Save check-in
         CheckIn checkIn = new CheckIn();

@@ -1,5 +1,6 @@
 package com.youssef.eventcheckin.user;
 
+import com.youssef.eventcheckin.common.exception.NotFoundException;
 import com.youssef.eventcheckin.user.dto.CreateUserRequest;
 import com.youssef.eventcheckin.user.dto.UserResponse;
 import org.springframework.stereotype.Service;
@@ -29,7 +30,9 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
-    public Optional<UserResponse> getById(UUID id) {
-        return userRepository.findById(id).map(UserResponse::from);
+    public UserResponse getById(UUID id) {
+        return userRepository.findById(id).map(UserResponse::from).orElseThrow(() ->
+                new NotFoundException("User not found")
+        );
     }
 }

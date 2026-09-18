@@ -3,6 +3,8 @@ package com.youssef.eventcheckin.registration;
 
 import com.youssef.eventcheckin.attendee.Attendee;
 import com.youssef.eventcheckin.attendee.AttendeeRepository;
+import com.youssef.eventcheckin.common.exception.ConflictException;
+import com.youssef.eventcheckin.common.exception.NotFoundException;
 import com.youssef.eventcheckin.event.Event;
 import com.youssef.eventcheckin.event.EventRepository;
 import com.youssef.eventcheckin.event.EventStatus;
@@ -33,21 +35,21 @@ public class RegistrationService {
     public RegistrationResponse register(UUID eventId , CreateRegistrationRequest request){
 
         // 1. Load Event
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
 
         // 2. Load attendee
-        Attendee attendee = attendeeRepository.findById(request.attendeeId()).orElseThrow(() -> new RuntimeException("Attendee not found"));
+        Attendee attendee = attendeeRepository.findById(request.attendeeId()).orElseThrow(() -> new NotFoundException("Attendee not found"));
 
         //3. Check event status
         if (event.getStatus() !=  EventStatus.PUBLISHED) {
-            throw new RuntimeException("Event is not open for registration");
+            throw new IllegalStateException("Event is not open for registration");
         }
 
         //4. check capacity
         long confirmedRegistration = registrationRepository.countByEventIdAndStatus(event.getId(),RegistrationStatus.CONFIRMED);
 
         if (confirmedRegistration >= event.getCapacity()){
-            throw new IllegalStateException("Event is at capacity");
+            throw new ConflictException("Event is at capacity");
         }
 
         // 5. Create & save registration
@@ -70,10 +72,10 @@ public class RegistrationService {
     @Transactional(readOnly = true)
     public RegistrationResponse getRegistration(UUID id) {
         Registration registration = registrationRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Registration not found"));
+                .orElseThrow(() -> new NotFoundException("Registration not found"));
 
         Ticket ticket = ticketRepository.findByRegistrationId(registration.getId())
-                .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                .orElseThrow(() -> new NotFoundException("Ticket not found"));
 
         return RegistrationResponse.from(registration, ticket);
     }
@@ -82,14 +84,14 @@ public class RegistrationService {
     @Transactional(readOnly = true)
     public Page<RegistrationResponse> getEventRegistrations(UUID eventId, Pageable pageable) {
 
-        Event event = eventRepository.findById(eventId).orElseThrow(() -> new RuntimeException("Event not found"));
+        Event event = eventRepository.findById(eventId).orElseThrow(() -> new NotFoundException("Event not found"));
 
         Page<Registration> registrations = registrationRepository.findByEventId(eventId, pageable);
 
 
         return registrations.map(registration -> {
             Ticket ticket = ticketRepository.findByRegistrationId(registration.getId())
-                    .orElseThrow(() -> new RuntimeException("Ticket not found"));
+                    .orElseThrow(() -> new NotFoundException("Ticket not found"));
 
             return RegistrationResponse.from(registration, ticket);
         });

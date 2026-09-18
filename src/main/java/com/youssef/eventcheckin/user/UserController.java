@@ -22,11 +22,8 @@ public class UserController {
     public ResponseEntity<UserResponse> create(@Valid @RequestBody CreateUserRequest request) {
         return ResponseEntity.status(201).body(userService.create(request));
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> getById(@PathVariable UUID id) {
-        return userService.getById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(userService.getById(id));
     }
 }

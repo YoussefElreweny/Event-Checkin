@@ -2,6 +2,8 @@ package com.youssef.eventcheckin.attendee;
 
 import com.youssef.eventcheckin.attendee.dto.AttendeeResponse;
 import com.youssef.eventcheckin.attendee.dto.CreateAttendeeRequest;
+import com.youssef.eventcheckin.common.exception.ConflictException;
+import com.youssef.eventcheckin.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +23,7 @@ public class AttendeeService {
     public AttendeeResponse create(CreateAttendeeRequest createAttendeeRequest) {
 
         if (attendeeRepository.existsByEmail(createAttendeeRequest.email())) {
-            throw new RuntimeException("Email already exists");
+            throw new ConflictException("Email already exists");
         }
 
         Attendee attendee = new Attendee();
@@ -39,7 +41,7 @@ public class AttendeeService {
     @Transactional
     public AttendeeResponse getById(UUID id) {
 
-        Attendee attendee = attendeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Attendee not found"));
+        Attendee attendee = attendeeRepository.findById(id).orElseThrow(() -> new NotFoundException("Attendee not found"));
 
         return toResponse(attendee);
     }
