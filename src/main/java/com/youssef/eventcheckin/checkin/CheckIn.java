@@ -32,7 +32,7 @@ public class CheckIn {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "checked_in_by",nullable = false)
-    private User user;
+    private User checkedInBy;
 
 
     @Column(nullable = false)

@@ -25,10 +25,10 @@ public class CheckInController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CheckInResponse checkIn(
-            @PathVariable UUID checkInId,
+            @PathVariable UUID eventId,
             @Valid @RequestBody CreateCheckInRequest request) {
 
-        return checkInService.checkIn(checkInId,request);
+        return checkInService.checkIn(eventId,request);
     }
 
     @GetMapping

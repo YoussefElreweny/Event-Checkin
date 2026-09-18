@@ -20,7 +20,7 @@ public record CheckInResponse(
         return new CheckInResponse(
                 checkIn.getId(),
                 checkIn.getTicket().getTicketCode(),
-                checkIn.getUser().getId(),
+                checkIn.getCheckedInBy().getId(),
                 checkIn.getCheckedInAt(),
                 checkIn.getGate()
         );

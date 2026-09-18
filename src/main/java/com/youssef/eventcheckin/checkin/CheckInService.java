@@ -73,8 +73,7 @@ public class CheckInService {
         // 7. Save check-in
         CheckIn checkIn = new CheckIn();
         checkIn.setTicket(ticket);
-        checkIn.setUser(staffUser);
-        checkIn.setCheckedInAt(now);
+        checkIn.setCheckedInBy(staffUser);
         checkIn.setGate(request.gate());
 
         CheckIn savedCheckIn = checkInRepository.save(checkIn);
