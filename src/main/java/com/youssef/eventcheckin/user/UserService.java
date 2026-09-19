@@ -32,6 +32,13 @@ public class UserService {
     }
 
     @Transactional(readOnly = true)
+    public UserResponse getByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .map(UserResponse::from)
+                .orElseThrow(() -> new NotFoundException("User not found"));
+    }
+
+    @Transactional(readOnly = true)
     public UserResponse getById(UUID id) {
         return userRepository.findById(id).map(UserResponse::from).orElseThrow(() ->
                 new NotFoundException("User not found")

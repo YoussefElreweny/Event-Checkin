@@ -4,6 +4,7 @@ import com.youssef.eventcheckin.user.dto.CreateUserRequest;
 import com.youssef.eventcheckin.user.dto.UserResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -16,6 +17,11 @@ public class UserController {
 
     public UserController(UserService userService) {
         this.userService = userService;
+    }
+
+    @GetMapping("/me")
+    public UserResponse me(Authentication authentication) {
+        return userService.getByEmail(authentication.getName());
     }
 
     @PostMapping
