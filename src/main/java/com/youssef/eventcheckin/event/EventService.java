@@ -32,7 +32,7 @@ public class EventService {
         }
 
         User organizer = userRepository.findById(request.organizerId())
-                .orElseThrow(() -> new RuntimeException("Organizer not found"));
+                .orElseThrow(() -> new NotFoundException("Organizer not found"));
 
         Event event = new Event();
 

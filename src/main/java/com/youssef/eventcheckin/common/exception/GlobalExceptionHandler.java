@@ -3,6 +3,7 @@ package com.youssef.eventcheckin.common.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,37 +40,19 @@ public class GlobalExceptionHandler {
     }
 
 
+
     @ExceptionHandler(DataIntegrityViolationException.class)
-    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(
-            DataIntegrityViolationException ex) {
-
+    public ResponseEntity<ErrorResponse> handleDataIntegrityViolation(DataIntegrityViolationException ex) {
         log.warn("Data integrity violation: {}", ex.getMostSpecificCause().getMessage());
-        ErrorResponse error = ErrorResponse.builder()
-                .status(409)
-                .error(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .message("Request conflicts with existing data")
-                .build();
-
-        return ResponseEntity.status(409).body(error);
+        return build(HttpStatus.CONFLICT, "Request conflicts with existing data", null);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
-            MethodArgumentNotValidException ex) {
-
+    public ResponseEntity<ErrorResponse> handleValidation(MethodArgumentNotValidException ex) {
         Map<String, String> fieldErrors = new HashMap<>();
-
-        ex.getBindingResult().getFieldErrors().forEach(error ->
-                fieldErrors.put(error.getField(), error.getDefaultMessage())
-        );
-
-        ErrorResponse response = ErrorResponse.builder()
-                .status(400)
-                .message("Validation failed")
-                .fieldErrors(fieldErrors)
-                .build();
-
-        return ResponseEntity.status(400).body(response);
+        ex.getBindingResult().getFieldErrors()
+                .forEach(e -> fieldErrors.put(e.getField(), e.getDefaultMessage()));
+        return build(HttpStatus.BAD_REQUEST, "Validation failed", fieldErrors);
     }
 
     @ExceptionHandler(IllegalStateException.class)
@@ -77,11 +60,11 @@ public class GlobalExceptionHandler {
             IllegalStateException ex) {
 
         ErrorResponse error = ErrorResponse.builder()
-                .status(422)
+                .status(HttpStatus.UNPROCESSABLE_ENTITY.value())
                 .message(ex.getMessage())
                 .build();
 
-        return ResponseEntity.status(422).body(error);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(error);
     }
 
 
