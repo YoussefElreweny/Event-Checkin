@@ -28,7 +28,7 @@ public class EventController {
     }
 
     @PostMapping("/{id}/publish")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     public EventResponse publish(@PathVariable UUID id) {
         return eventService.publish(id);
     }
@@ -39,7 +39,7 @@ public class EventController {
         return eventService.getById(id);
     }
 
-    @DeleteMapping("/{id}/delete")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable UUID id) {
         eventService.delete(id);

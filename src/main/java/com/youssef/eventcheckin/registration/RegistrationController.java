@@ -22,7 +22,7 @@ public class RegistrationController {
     private final RegistrationService registrationService;
 
     @PostMapping("/events/{eventId}/registrations")
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.CREATED)
     public RegistrationResponse register(
             @PathVariable UUID eventId,
             @Valid @RequestBody CreateRegistrationRequest request){
