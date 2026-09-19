@@ -39,7 +39,7 @@ public class EventController {
         return eventService.getById(id);
     }
 
-    @DeleteMapping("/{eventId}/delete")
+    @DeleteMapping("/{id}/delete")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteById(@PathVariable UUID id) {
         eventService.delete(id);
