@@ -2,9 +2,9 @@ spring:
   application:
     name: even-checkin
   datasource:
-    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
+    url: jdbc:postgresql://localhost:5432/${POSTGRES_DB:event_checkin}
+    username: ${POSTGRES_USER:eventuser}
+    password: ${POSTGRES_PASSWORD:eventpass}
   jpa:
     hibernate:
       ddl-auto: validate
@@ -23,3 +23,7 @@ logging:
   level:
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: DEBUG
     org.hibernate.SQL: DEBUG
+    
+app:
+  cors:
+    allowed-origins: http://localhost:5173,http://localhost:3000
