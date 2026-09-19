@@ -2,6 +2,7 @@ package com.youssef.eventcheckin.event;
 
 import com.youssef.eventcheckin.event.dto.CreateEventRequest;
 import com.youssef.eventcheckin.event.dto.EventResponse;
+import com.youssef.eventcheckin.event.dto.EventStatsResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,5 +43,11 @@ public class EventController {
     public Page<EventResponse> getAll(Pageable pageable) {
 
         return eventService.getAll(pageable);
+    }
+
+    @GetMapping("/{eventId}/stats")
+    public EventStatsResponse getStats(@PathVariable UUID eventId) {
+
+        return eventService.getStats(eventId);
     }
 }

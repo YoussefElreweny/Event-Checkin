@@ -30,6 +30,13 @@ public class RegistrationController {
         return registrationService.register(eventId, request);
     }
 
+    @DeleteMapping("/registrations/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void cancel(@PathVariable UUID id) {
+        registrationService.cancel(id);
+    }
+
+
     @GetMapping("/events/{eventId}/registrations")
     public Page<RegistrationResponse> getEventRegistrations(
             @PathVariable UUID eventId,

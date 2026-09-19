@@ -1,8 +1,12 @@
 package com.youssef.eventcheckin.event;
 
+import com.youssef.eventcheckin.checkin.CheckInRepository;
 import com.youssef.eventcheckin.common.exception.NotFoundException;
 import com.youssef.eventcheckin.event.dto.CreateEventRequest;
 import com.youssef.eventcheckin.event.dto.EventResponse;
+import com.youssef.eventcheckin.event.dto.EventStatsResponse;
+import com.youssef.eventcheckin.registration.RegistrationRepository;
+import com.youssef.eventcheckin.registration.RegistrationStatus;
 import com.youssef.eventcheckin.user.User;
 import com.youssef.eventcheckin.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -19,6 +23,8 @@ public class EventService {
 
     private final EventRepository eventRepository;
     private final UserRepository userRepository;
+    private final RegistrationRepository registrationRepository;
+    private final CheckInRepository checkInRepository;
 
     @Transactional
     public EventResponse create(CreateEventRequest request) {
@@ -68,7 +74,7 @@ public class EventService {
     }
 
 
-    @Transactional()
+    @Transactional
     public EventResponse publish(UUID id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("Event not found"));
@@ -81,6 +87,50 @@ public class EventService {
 
         return toResponse(event);
     }
+
+
+    @Transactional
+    public EventResponse delete(UUID id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+        eventRepository.delete(event);
+        return toResponse(event);
+    }
+
+
+    @Transactional(readOnly = true)
+    public EventStatsResponse getStats(UUID eventId) {
+
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        long confirmed = registrationRepository.countByEventIdAndStatus(eventId, RegistrationStatus.CONFIRMED);
+        long checkedIn = checkInRepository.countByTicket_Registration_Event_Id(eventId);
+
+        double rate = confirmed == 0 ? 0.0 : (double) checkedIn / confirmed * 100;
+
+        return new EventStatsResponse(
+                event.getId(),
+                event.getName(),
+                event.getCapacity(),
+                confirmed,
+                checkedIn,
+                confirmed - checkedIn,
+                Math.round(rate * 10) / 10.0
+        );
+    }
+
+    @Transactional
+    public EventResponse cancel(UUID id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Event not found"));
+
+        event.setStatus(EventStatus.CANCELLED);
+        return toResponse(event);
+    }
+
+
+
 
     private EventResponse toResponse(Event event) {
 

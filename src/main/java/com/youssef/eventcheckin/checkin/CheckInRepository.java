@@ -15,4 +15,5 @@ public interface CheckInRepository extends JpaRepository<CheckIn, UUID> {
 
     Page<CheckIn> findByTicket_Registration_Event_Id(UUID eventId, Pageable pageable);
 
+    long countByTicket_Registration_Event_Id(UUID eventId);
 }
